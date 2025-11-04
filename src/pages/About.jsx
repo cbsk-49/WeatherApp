@@ -196,15 +196,6 @@ function About() {
               </div>
             </div>
 
-            <div className="app-tech">
-              <h4>Built With:</h4>
-              <div className="tech-badges">
-                <span className="tech-badge">React</span>
-                <span className="tech-badge">OpenWeather API</span>
-                <span className="tech-badge">Modern CSS</span>
-              </div>
-            </div>
-
             <div className="app-footer-info">
               <p><strong>Version:</strong> 1.0.0</p>
               <p><strong>Powered by:</strong> OpenWeather</p>

@@ -75,7 +75,7 @@ function App() {
                     <input
                       type="text"
                       className="city-input"
-                      placeholder="Enter City Name (e.g., London, New York, Tokyo)"
+                      placeholder="Enter City Name (e.g., London, New York)"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                     />
