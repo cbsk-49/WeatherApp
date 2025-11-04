@@ -2,7 +2,6 @@ import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./pages/Header";
 import WeatherCard from "./pages/WeatherCard";
-import Home from "./pages/Home";
 import About from "./pages/About";
 import Alerts from "./pages/Alerts";
 import Maps from "./pages/Maps";
