@@ -1,0 +1,233 @@
+/* 🌤️ Base Page Layout */
+.alerts-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  color: white;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  transition: background 2s ease;
+  padding-top: 80px;
+  padding-bottom: 40px;
+}
+
+/* 🔔 Alert Banner Styles */
+.alert-banner {
+  color: white;
+  font-weight: bold;
+  padding: 12px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  position: relative;
+}
+
+.alert-banner.danger {
+  background-color: #d90429;
+}
+
+.alert-banner.warning {
+  background-color: #ff9f1c;
+}
+
+.alert-banner.success {
+  background-color: #4caf50;
+}
+
+.alert-banner.info {
+  background-color: #0077b6;
+}
+
+.alert-banner.normal {
+  background-color: #495057;
+}
+
+/* 🔎 Search Form */
+.alert-form {
+  margin-top: 40px;
+  position: relative;
+  z-index: 3;
+}
+
+.alert-form input {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  width: 250px;
+  margin-right: 10px;
+  outline: none;
+  font-size: 1rem;
+}
+
+.alert-form button {
+  background-color: #38b000;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.alert-form button:hover {
+  background-color: #2d8600;
+}
+
+/* 🌤 Weather Display Box */
+.alert-container {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+  position: relative;
+}
+
+.alert-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #edf2f4;
+}
+
+.alert-subtitle {
+  font-size: 1.1rem;
+  color: #adb5bd;
+  margin-bottom: 40px;
+}
+
+.alert-weather {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 30px 50px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+.alert-icon {
+  width: 100px;
+  height: 100px;
+}
+
+.alert-temp {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 10px 0 5px;
+}
+
+.alert-condition {
+  font-size: 1.2rem;
+  color: #ffcb77;
+}
+
+.alert-footer {
+  margin-top: 60px;
+  font-size: 0.9rem;
+  color: #bbbbbb;
+}
+
+.error {
+  color: #ff4d4d;
+  margin-top: 20px;
+}
+
+/* 🌈 Animated Weather Backgrounds */
+.weather-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ☀️ Sunny Scene */
+.sunny-scene {
+  background: linear-gradient(to bottom, #87ceeb, #fdfcdc);
+}
+.sunny-scene .weather-overlay {
+  background: radial-gradient(circle at 20% 20%, #fff8b0 0%, transparent 60%);
+  animation: sunGlow 5s ease-in-out infinite alternate;
+}
+@keyframes sunGlow {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+/* ☁️ Cloudy Scene */
+.cloudy-scene {
+  background: linear-gradient(to bottom, #90a4ae, #607d8b);
+}
+.cloudy-scene .weather-overlay {
+  background-image: url("https://i.ibb.co/J5z0FnV/clouds.png");
+  background-size: 200% auto;
+  background-repeat: repeat-x;
+  animation: moveClouds 60s linear infinite;
+}
+@keyframes moveClouds {
+  from { background-position: 0 0; }
+  to { background-position: -200% 0; }
+}
+
+/* 🌧️ Rainy Scene */
+.rainy-scene {
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+}
+.rainy-scene .weather-overlay {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.2) 3px
+  );
+  animation: rainMove 0.3s linear infinite;
+}
+@keyframes rainMove {
+  from { background-position: 0 0; }
+  to { background-position: -10px 20px; }
+}
+
+/* ⛈️ Stormy Scene */
+.stormy-scene {
+  background: linear-gradient(to bottom, #232526, #414345);
+}
+.stormy-scene .weather-overlay {
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 100%);
+  animation: lightningFlash 6s infinite;
+}
+@keyframes lightningFlash {
+  0%, 80%, 100% { opacity: 0; }
+  85% { opacity: 0.8; background: rgba(255,255,255,0.6); }
+}
+
+/* ❄️ Snowy Scene */
+.snowy-scene {
+  background: linear-gradient(to bottom, #d0f0ff, #b0e0e6);
+}
+.snowy-scene .weather-overlay {
+  background-image: radial-gradient(white 1px, transparent 2px);
+  background-size: 4px 4px;
+  animation: snowFall 10s linear infinite;
+}
+@keyframes snowFall {
+  from { background-position: 0 -100px; }
+  to { background-position: 50px 100px; }
+}
+
+/* 🌫️ Foggy Scene */
+.foggy-scene {
+  background: linear-gradient(to bottom, #757f9a, #d7dde8);
+}
+.foggy-scene .weather-overlay {
+  background: rgba(255, 255, 255, 0.15);
+  filter: blur(15px);
+  animation: fogDrift 15s ease-in-out infinite;
+}
+@keyframes fogDrift {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+/* 🌤️ Default Scene */
+.default-scene {
+  background: linear-gradient(to bottom, #14213d, #1f1f1f);
+}
