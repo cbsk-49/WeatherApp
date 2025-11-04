@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Alerts from "./pages/Alerts";
 import Maps from "./pages/Maps";
+import Auth from "./pages/Auth";
 import "./index.css";
 
 function App() {
@@ -124,6 +125,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/alerts" element={<Alerts cityFromHome={city} />} />
         <Route path="/maps" element={<Maps />} />
+        <Route path="/auth" element={<Auth />} />
       </Routes>
     </Router>
   );

@@ -41,6 +41,11 @@ function Header() {
                 Maps
               </NavLink>
             </li>
+            <li className="btn">
+              <NavLink to="/auth" className={({ isActive }) => (isActive ? "active" : "")}>
+                Sign In
+              </NavLink>
+            </li>
           </ul>
         </div>
       </nav>
