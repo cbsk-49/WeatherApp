@@ -50,29 +50,20 @@
   z-index: 3;
 }
 
-.alert-form input {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  width: 250px;
-  margin-right: 10px;
-  outline: none;
-  font-size: 1rem;
+/* Align with global .city-input from index.css */
+.alert-form .city-input {
+  width: 100%;
+  max-width: 420px;
+  margin-right: 12px;
 }
 
+/* Keep a distinct hover for Alerts while using global button base */
 .alert-form button {
-  background-color: #38b000;
-  color: white;
-  font-weight: bold;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: 700;
 }
 
 .alert-form button:hover {
-  background-color: #2d8600;
+  filter: brightness(1.05);
 }
 
 /* 🌤 Weather Display Box */

@@ -86,13 +86,17 @@ function Alerts({ cityFromHome }) {
       )}
 
       {/* City Form */}
-      <form className="alert-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter City Name"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
+      <form className="weather-form alert-form" onSubmit={handleSubmit}>
+        <div className="input-wrapper">
+          <span className="input-icon">🔍</span>
+          <input
+            type="text"
+            className="city-input"
+            placeholder="Enter City Name"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+        </div>
         <button type="submit">Check Alert</button>
       </form>
 

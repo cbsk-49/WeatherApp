@@ -74,7 +74,7 @@ body {
 }
 
 .search-section {
-    max-width: 720px;
+    max-width: 840px;
     margin: 0 auto 50px;
     padding: 0 20px;
 }
@@ -285,6 +285,7 @@ body {
     border: 1px solid #333;
     width: 100%;
     max-width: 420px;
+    color: black;
 }
 
 button[type="submit"] {
