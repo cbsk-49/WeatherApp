@@ -5,8 +5,6 @@ function About() {
 
   useEffect(() => {
     const observers = sectionRefs.current.map((ref) => {
-      if (!ref) return null;
-      
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -15,7 +13,6 @@ function About() {
             }
           });
         },
-        { threshold: 0.1 }
       );
       
       observer.observe(ref);
