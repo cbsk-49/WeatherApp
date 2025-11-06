@@ -4,24 +4,19 @@ function About() {
   const sectionRefs = useRef([]);
 
   useEffect(() => {
-    const observers = sectionRefs.current.map((ref) => {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-            }
-          });
-        },
-      );
-      
-      observer.observe(ref);
-      return observer;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
     });
 
-    return () => {
-      observers.forEach((observer) => observer?.disconnect());
-    };
+    sectionRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const addRef = (el) => {
