@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import "./About.css";
 
 function About() {
   const sectionRefs = useRef([]);
@@ -12,7 +13,8 @@ function About() {
       });
     });
 
-    sectionRefs.current.forEach((ref) => {
+
+   sectionRefs.current.forEach((ref) => {
       if (ref) observer.observe(ref);
     });
 
@@ -24,6 +26,7 @@ function About() {
       sectionRefs.current.push(el);
     }
   };
+
 
   return (
     <div className="about-page">

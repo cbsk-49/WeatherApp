@@ -1,48 +1,80 @@
-import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+
 import Header from "./pages/Header";
 import WeatherCard from "./pages/WeatherCard";
+import Forecast from "./pages/Forecast";
 import About from "./pages/About";
 import Alerts from "./pages/Alerts";
 import Maps from "./pages/Maps";
 import Auth from "./pages/Auth";
+
 import "./index.css";
 
 function App() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Use API key from .env
+  const apiKey = useMemo(() => import.meta.env.VITE_OPENWEATHER_API_KEY, []);
+
+  // keep background in sync with weather
+  const applyBodyTheme = (main) => {
+    const t = (main || "").toLowerCase();
+    // keep any pre-existing classes; just update data-attr
+    document.body.setAttribute("data-weather", t);
+  };
+
+  useEffect(() => {
+    // reset theme on first load
+    applyBodyTheme("");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!city) return;
 
+    setLoading(true);
     try {
-      const apiKey = "0e62256fee1a37258c2b81d504f0c4dc";
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+          city
+        )}&appid=${apiKey}&units=metric`
       );
       const data = await response.json();
-      console.log(data);
 
       if (data.cod === 200) {
-      setWeather({
-        name: data.name,
-        temp: data.main.temp,
-        humidity: data.main.humidity,
-        desc: data.weather[0].description,
-        icon: data.weather[0].icon,
-        wind: data.wind.speed,
-        sunrise: data.sys.sunrise,
-        sunset: data.sys.sunset,
-        timezone: data.timezone,
-      });
-
+        applyBodyTheme(data.weather?.[0]?.main);
+        setWeather({
+          name: data.name,
+          country: data.sys?.country,
+          temp: data.main.temp,
+          feels_like: data.main.feels_like,
+          temp_min: data.main.temp_min,
+          temp_max: data.main.temp_max,
+          humidity: data.main.humidity,
+          pressure: data.main.pressure,
+          desc: data.weather[0].description,
+          main: data.weather[0].main,
+          icon: data.weather[0].icon,
+          wind: data.wind.speed,
+          wind_deg: data.wind.deg,
+          clouds: data.clouds.all,
+          visibility: data.visibility,
+          sunrise: data.sys.sunrise,
+          sunset: data.sys.sunset,
+          timezone: data.timezone,
+          coord: data.coord,
+        });
       } else {
-        setWeather({ error: "City not found" });
+        setWeather({ error: data?.message ? String(data.message) : "City not found" });
       }
     } catch (error) {
       console.error("Error fetching weather:", error);
       setWeather({ error: "Error fetching data. Please try again." });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,8 +89,10 @@ function App() {
             <main className="home-page">
               <div className="hero-section">
                 <h1 className="hero-title">Welcome to AccuWeather</h1>
-                <p className="hero-subtitle">Get real-time weather updates for any city worldwide</p>
-                <div className="weather-icons">
+                <p className="hero-subtitle">
+                  Get real-time weather updates for any city worldwide
+                </p>
+                <div className="weather-icons" aria-hidden>
                   <span className="weather-icon">☀️</span>
                   <span className="weather-icon">🌧️</span>
                   <span className="weather-icon">⛈️</span>
@@ -77,11 +111,31 @@ function App() {
                       placeholder="Enter City Name (e.g., London, New York)"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
+                      aria-label="City name"
                     />
                   </div>
-                  <button type="submit">Get Weather</button>
+                  <button type="submit" disabled={loading}>
+                    {loading ? "Loading…" : "Get Weather"}
+                  </button>
                 </form>
-                {weather && <WeatherCard weather={weather} />}
+
+                {loading && (
+                  <div className="loader" aria-live="polite">
+                    <div className="spinner" /> Fetching weather…
+                  </div>
+                )}
+
+                {weather && !loading && <WeatherCard weather={weather} />}
+
+                <div className="actions-row">
+                  <Link
+                    className="pill-link"
+                    to={`/forecast?city=${encodeURIComponent(city || weather?.name || "")}`}
+                    state={{ fromCity: city || weather?.name || "" }}
+                  >
+                    View 3-Day Forecast →
+                  </Link>
+                </div>
               </div>
 
               <div className="features-section">
@@ -99,8 +153,8 @@ function App() {
                   </div>
                   <div className="feature-card">
                     <div className="feature-icon">🌬️</div>
-                    <h3>Wind Speed</h3>
-                    <p>Wind speed and conditions updates</p>
+                    <h3>Wind</h3>
+                    <p>Speed & direction updates</p>
                   </div>
                   <div className="feature-card">
                     <div className="feature-icon">🌅</div>
@@ -113,16 +167,17 @@ function App() {
               <div className="quick-tips">
                 <h3>💡 Quick Tips</h3>
                 <ul>
-                  <li>Search for any city name worldwide</li>
-                  <li>Check the Alerts page for weather warnings</li>
-                  <li>Explore our About page to learn more</li>
+                  <li>Search any city name worldwide</li>
+                  <li>Check the Alerts page for warnings</li>
+                  <li>Visit the Forecast page for the next 3 days</li>
                 </ul>
               </div>
             </main>
           }
         />
+        <Route path="/forecast" element={<Forecast apiKey={apiKey} />} />
         <Route path="/about" element={<About />} />
-        <Route path="/alerts" element={<Alerts cityFromHome={city} />} />
+        <Route path="/alerts" element={<Alerts cityFromHome={city || weather?.name || ""} />} />
         <Route path="/maps" element={<Maps />} />
         <Route path="/auth" element={<Auth />} />
       </Routes>
