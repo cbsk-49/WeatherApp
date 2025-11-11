@@ -113,6 +113,18 @@ input.error {
   margin-top: 5px;
 }
 
+/* Server error banner */
+.server-error {
+  background: rgba(231, 76, 60, 0.2);
+  border: 1px solid rgba(231, 76, 60, 0.5);
+  color: #ffb3b3;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 /* Submit button */
 button[type="submit"] {
   padding: 14px;

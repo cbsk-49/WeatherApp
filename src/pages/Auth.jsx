@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import "./Auth.css";
 
 function Auth() {
+  const navigate = useNavigate();
+  const { signUp, signIn } = useAuth();
   const [isSignIn, setIsSignIn] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
@@ -11,6 +15,7 @@ function Auth() {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   // Handle input change
   const handleChange = (e) => {
@@ -21,6 +26,7 @@ function Auth() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
+    setServerError("");
   };
 
   // Basic validation
@@ -45,16 +51,38 @@ function Auth() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    setServerError("");
+
+    try {
+      if (isSignIn) {
+        // Sign In
+        const { data, error } = await signIn(formData.email, formData.password);
+        if (error) {
+          setServerError(error.message || "Sign in failed");
+        } else {
+          navigate("/");
+        }
+      } else {
+        // Sign Up
+        const { data, error } = await signUp(formData.email, formData.password, formData.name);
+        if (error) {
+          setServerError(error.message || "Sign up failed");
+        } else {
+          alert("Sign up successful! Please check your email to verify your account.");
+          setIsSignIn(true);
+          setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+        }
+      }
+    } catch (err) {
+      setServerError("An unexpected error occurred");
+    } finally {
       setIsSubmitting(false);
-      alert(isSignIn ? "Sign In successful!" : "Sign Up successful!");
-      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-    }, 1000);
+    }
   };
 
   return (
@@ -76,6 +104,13 @@ function Auth() {
             Sign Up
           </button>
         </div>
+
+        {serverError && (
+          <div className="server-error">
+            ⚠️ {serverError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           {!isSignIn && (
             <div className="form-group">

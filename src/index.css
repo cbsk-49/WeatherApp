@@ -90,9 +90,30 @@ body[data-weather="haze"] {
   background: white;
   transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
   box-shadow: 0 4px 10px rgba(0,0,0,.06);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
 }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.10); }
 .btn.active { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+.btn.welcome-msg { 
+  background: linear-gradient(135deg, #10b981, #22c55e); 
+  color: white; 
+  font-weight: 600;
+  cursor: default;
+}
+.btn.welcome-msg:hover { 
+  transform: none; 
+  box-shadow: 0 4px 10px rgba(0,0,0,.06);
+}
+.btn.btn-signout {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: 600;
+}
+.btn.btn-signout:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
 
 /* ------------------------
    Home Page & Hero

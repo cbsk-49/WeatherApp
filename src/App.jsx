@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Header from "./pages/Header";
 import WeatherCard from "./pages/WeatherCard";
@@ -79,14 +81,20 @@ function App() {
   };
 
   return (
-    <Router>
-      <Header />
+    <AuthProvider>
+      <Router>
+        <Header />
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <main className="home-page">
+        <Routes>
+          {/* Auth Route - Public */}
+          <Route path="/auth" element={<Auth />} />
+          
+          {/* Protected Routes - Require Authentication */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <main className="home-page">
               <div className="hero-section">
                 <h1 className="hero-title">Welcome to AccuWeather</h1>
                 <p className="hero-subtitle">
@@ -173,15 +181,47 @@ function App() {
                 </ul>
               </div>
             </main>
-          }
-        />
-        <Route path="/forecast" element={<Forecast apiKey={apiKey} />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/alerts" element={<Alerts cityFromHome={city || weather?.name || ""} />} />
-        <Route path="/maps" element={<Maps />} />
-        <Route path="/auth" element={<Auth />} />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/forecast" 
+            element={
+              <ProtectedRoute>
+                <Forecast apiKey={apiKey} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/about" 
+            element={
+              <ProtectedRoute>
+                <About />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/alerts" 
+            element={
+              <ProtectedRoute>
+                <Alerts cityFromHome={city || weather?.name || ""} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/maps" 
+            element={
+              <ProtectedRoute>
+                <Maps />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 
