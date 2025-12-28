@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
+import PhotoUpload from "../components/PhotoUpload";
+import PhotoGallery from "../components/PhotoGallery";
 
 function groupByDayThreeSnapshots(list) {
   // pick around 12:00 (or nearest) per day, for next 3 distinct days
@@ -44,6 +46,7 @@ export default function Forecast({ apiKey }) {
   const [days, setDays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   const hasKey = useMemo(() => Boolean(apiKey), [apiKey]);
 
@@ -79,6 +82,16 @@ export default function Forecast({ apiKey }) {
             "data-weather",
             grouped[0].item.weather[0].main.toLowerCase()
           );
+        }
+        
+        // Store location info for photos
+        if (data.city) {
+          setCurrentLocation({
+            city: data.city.name,
+            country: data.city.country,
+            lat: data.city.coord?.lat,
+            lon: data.city.coord?.lon
+          });
         }
       } else {
         setError(data?.message ? String(data.message) : "Could not fetch forecast");
@@ -130,32 +143,57 @@ export default function Forecast({ apiKey }) {
       {error && <div className="error">⚠️ {error}</div>}
 
       {!loading && !error && days.length > 0 && (
-        <div className="forecast-grid">
-          {days.map((d) => {
-            const dt = new Date(d.date);
-            const weekday = dt.toLocaleDateString(undefined, { weekday: "long" });
-            const month = dt.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-            return (
-              <div className="forecast-card" key={d.date}>
-                <div className="fc-header">
-                  <div className="fc-day">{weekday}</div>
-                  <div className="fc-date">{month}</div>
+        <>
+          <div className="forecast-actions" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+            {currentLocation && (
+              <PhotoUpload
+                city={currentLocation.city}
+                country={currentLocation.country}
+                lat={currentLocation.lat}
+                lon={currentLocation.lon}
+                onUploadSuccess={() => {
+                  // Refresh photo gallery after upload
+                  window.location.reload();
+                }}
+              />
+            )}
+          </div>
+          
+          <div className="forecast-grid">
+            {days.map((d) => {
+              const dt = new Date(d.date);
+              const weekday = dt.toLocaleDateString(undefined, { weekday: "long" });
+              const month = dt.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+              return (
+                <div className="forecast-card" key={d.date}>
+                  <div className="fc-header">
+                    <div className="fc-day">{weekday}</div>
+                    <div className="fc-date">{month}</div>
+                  </div>
+                  <img
+                    className="fc-icon"
+                    src={`https://openweathermap.org/img/wn/${d.icon}@2x.png`}
+                    alt={d.desc}
+                  />
+                  <div className="fc-temp">{d.temp}°C</div>
+                  <div className="fc-range">
+                    <span>H: {d.max}°</span>
+                    <span>L: {d.min}°</span>
+                  </div>
+                  <div className="fc-desc">{d.desc}</div>
                 </div>
-                <img
-                  className="fc-icon"
-                  src={`https://openweathermap.org/img/wn/${d.icon}@2x.png`}
-                  alt={d.desc}
-                />
-                <div className="fc-temp">{d.temp}°C</div>
-                <div className="fc-range">
-                  <span>H: {d.max}°</span>
-                  <span>L: {d.min}°</span>
-                </div>
-                <div className="fc-desc">{d.desc}</div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+
+          {currentLocation && (
+            <PhotoGallery
+              city={currentLocation.city}
+              lat={currentLocation.lat}
+              lon={currentLocation.lon}
+            />
+          )}
+        </>
       )}
     </main>
   );

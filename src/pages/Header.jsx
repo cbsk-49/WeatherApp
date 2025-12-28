@@ -7,7 +7,7 @@ export default function Header() {
   const { user, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const username = user?.user_metadata?.username || user?.email?.split('@')[0] || 'User';
+  const username = user?.name || user?.email?.split('@')[0] || 'User';
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);

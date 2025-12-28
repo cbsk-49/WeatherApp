@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
 
 const AuthContext = createContext({});
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -16,58 +16,106 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check active sessions and subscribe to auth changes
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    // Check if user is logged in (check token and fetch user data)
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchCurrentUser(token);
+    } else {
       setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    }
   }, []);
 
-  const signUp = async (email, password, username) => {
+  const fetchCurrentUser = async (token) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username: username,
-          },
-        },
+      const response = await fetch(`${API_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
-      if (error) throw error;
-      return { data, error: null };
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+      } else {
+        localStorage.removeItem('token');
+        setUser(null);
+      }
     } catch (error) {
-      return { data: null, error };
+      console.error('Error fetching user:', error);
+      localStorage.removeItem('token');
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signUp = async (email, password, name) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password, name })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { data: null, error: { message: data.error || 'Sign up failed' } };
+      }
+
+      // Store token and set user
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+      return { data: data.user, error: null };
+    } catch (error) {
+      return { data: null, error: { message: error.message || 'Network error' } };
     }
   };
 
   const signIn = async (email, password) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch(`${API_URL}/auth/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
       });
-      if (error) throw error;
-      return { data, error: null };
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { data: null, error: { message: data.error || 'Sign in failed' } };
+      }
+
+      // Store token and set user
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+      return { data: data.user, error: null };
     } catch (error) {
-      return { data: null, error };
+      return { data: null, error: { message: error.message || 'Network error' } };
     }
   };
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch(`${API_URL}/auth/signout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+      localStorage.removeItem('token');
       setUser(null);
     } catch (error) {
       console.error('Error signing out:', error);
+      localStorage.removeItem('token');
+      setUser(null);
     }
   };
 
